@@ -1,0 +1,6 @@
+bin/
+obj/
+Integration.depend
+Integration.layout.save
+Integration.layout
+main.cpp.save
