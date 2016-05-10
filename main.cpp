@@ -6,6 +6,7 @@
 using namespace std;
 int p = 3;
 
+
 void text(string x)
 {
     cout<< x<<"\n";
@@ -20,35 +21,27 @@ double wartoscFunkcji(int wybor,double x)
         wynik=x*x;
         break;
     case 2:
-        wynik=x*sin(x);
+        wynik=(x-1)*(x*x-4);
         break;
+    case 3:
+        wynik=x*x*x+x*x-8*x-8;
+
 
     }
     return wynik;
 }
 
-double waga(double x)
-{
-    return 1.0/(sqrt(-x*x+1));
-}
 
-
-double newtonCotess(int wybor)
-{
-    double wartosc=0,poczatekPrzedzialu,koniecPrzedzialu,wartoscStara,epsilon;
-    int iloscPrzedzialow,ilePunktow;
-    text("Podaj poczatek przedzialu");
-
+void daneWejsciowe(double &poczatekPrzedzialu, double &koniecPrzedzialu,int &iloscPrzedzialow, double &epsilon, int &iloscWezlow)
+{   text("Podaj poczatek przedzialu: ");
     cin>>poczatekPrzedzialu;
-    cout<<poczatekPrzedzialu;
-    text("Podaj koniec przedzialu");
+    text("Podaj koniec przedzialu: ");
     cin>>koniecPrzedzialu;
-    cout<<koniecPrzedzialu;
     if(koniecPrzedzialu<poczatekPrzedzialu)
     {
         swap(poczatekPrzedzialu,koniecPrzedzialu);
     }
-    text("Podaj parzysta ilosc przedzialow");
+    text("Podaj parzysta ilosc przedzialow: ");
     cin>>iloscPrzedzialow;
     if (iloscPrzedzialow<2)
     {
@@ -59,72 +52,62 @@ double newtonCotess(int wybor)
     if (iloscPrzedzialow%2==1)
     {
         iloscPrzedzialow+=1;
-        text("Automatycznie dobrano parzysta ilosc przedzialow");
+        text("Automatycznie dobrano parzysta ilosc przedzialow = ");
         cout<<iloscPrzedzialow;
     }
-    text("Podaj dokaladnosc");
+    text("Podaj dokladnosc: ");
     cin>>epsilon;
-    wartosc=0,wartoscStara=0;
 
 
+    text("Podaj ilosc wezlow: (2-5) ");
+    cin>>iloscWezlow;
+
+}
+
+
+double newtonCotess(int wybor,double poczatekPrzedzialu, double koniecPrzedzialu, double epsilon,int iloscPrzedzialow)
+{
+    double wartosc=0,wartoscStara=0;
     do
     {
-        //ilePunktow=2*iloscPrzedzialow+1;
-        cout<<"ilosc przedzialow : "  << iloscPrzedzialow<<"\n";
+
         wartoscStara=wartosc;
-        cout <<"stara wartosc to: "<<wartoscStara<<"\n";
         wartosc=0;
-        cout<<"nowa wartosc to : "<<wartosc<<"\n";
         double h = (koniecPrzedzialu-poczatekPrzedzialu)/iloscPrzedzialow;
-        cout<<"wartosc h wynosi : "<<h<<"\n";
         wartosc = wartoscFunkcji( wybor , poczatekPrzedzialu ) + wartoscFunkcji( wybor , koniecPrzedzialu );
         for (int i=0; i < iloscPrzedzialow; i++)
         {
 
             if ( i % 2 == 0)
             {
-                wartosc=wartosc+2*(wartoscFunkcji(wybor,poczatekPrzedzialu+i*h));
-                //cout<<wartosc;
-                //text("");
+                   wartosc=wartosc+2*(wartoscFunkcji(wybor,poczatekPrzedzialu+i*h));
+
             }
             else
             {
-                wartosc=wartosc+4*(wartoscFunkcji(wybor,poczatekPrzedzialu+i*h));
-                //text("");
-            }
+                    wartosc=wartosc+4*(wartoscFunkcji(wybor,poczatekPrzedzialu+i*h));
 
+            }
         }
+
         iloscPrzedzialow*=2;
         wartosc=(h*wartosc)/3;
-        text("Roznica wynosi \n");
-        //cout<<"wartosc stara: "<<wartoscStara<<"wartosc nowa " << wartosc<<"\n";
-        cout<<abs(wartosc-wartoscStara);
+
     }
 
     while(abs(wartosc-wartoscStara)>epsilon);
-
+    cout<<"Ilosc przedzialow: "<<iloscPrzedzialow<<"\n";
     return wartosc;
 }
 
-double simposonGranica(int wybor, double epsilon)
+double granica(int wybor, double epsilon)
 {
 
     double x1Left=0.0;
-    double x2Left;
-    double x2Right;
+    double x2Left=-0.5;
+    double x2Right=0.5;
     double x1Right=0.0;
     double temp;
-    text("Podaj poczatek przedzialu");
-    cin>>x2Left;
-    cout<<x2Left;
-    text("Podaj koniec przedzialu");
-    cin>>x2Right;
-    cout<<x2Right;
-    x2Left/=2;
-    x2Right/=2;
-
-
-
     double h_right,h_left;
     int it=1;
     double wartoscLewa=0,wartoscLewaNowa=0;
@@ -139,22 +122,17 @@ double simposonGranica(int wybor, double epsilon)
             x1Right=x2Right;
             x2Right=x1Right+(temp*0.5);
 
-            cout<<setprecision(p)<<"Po: x1_left = "<<x1Left<<" x2_left = "<<x2Left<<"\n";
-            cout<<setprecision(p)<<"Po: x1_right = "<<x1Right<<" x2_right = "<<x2Right<<"\n";
         }
 
         if(it==1)
         {
-            cout<<setprecision(p)<<"Po: x1_left = "<<x1Left<<" x2_left = "<<x2Left<<"\n";
-            cout<<setprecision(p)<<"Po: x1_right = "<<x1Right<<" x2_right = "<<x2Right<<"\n";
+
         }
         wartoscLewa=0;
         wartoscPrawa=0;
-        h_right=(x2Right-x1Right);
-        h_left=(x2Left-x1Left);
         temp=(x2Right-x1Right);
         wartoscPrawa=abs(((x2Right-x1Right)/6))*((wartoscFunkcji(wybor,x1Right))+4*wartoscFunkcji(wybor,((x1Right+x2Right)/2))+wartoscFunkcji(wybor,x2Right));
-        wartoscLewa=((x2Left-x1Left)/6)*(wartoscFunkcji(wybor,x1Left)+(4*wartoscFunkcji(wybor,((x1Left+x2Left)/2)))+wartoscFunkcji(wybor,x2Left));
+        wartoscLewa=abs((x2Left-x1Left)/6)*(wartoscFunkcji(wybor,x1Left)+(4*wartoscFunkcji(wybor,((x1Left+x2Left)/2)))+wartoscFunkcji(wybor,x2Left));
         if (wartoscPrawa>epsilon)
         {
             wartoscPrawaNowa+=wartoscPrawa;
@@ -163,16 +141,29 @@ double simposonGranica(int wybor, double epsilon)
         {
             wartoscLewaNowa+=wartoscLewa;
         }
-        cout<<"iterator :"<<it<<"\n";
-        cout<<"Wartosc lewa nowa : " <<wartoscLewaNowa<<"\n";
-        cout<<"Wartosc Prawa nowa: "<<wartoscPrawaNowa<<"\n";
+
         it++;
 
 
     }
     while((wartoscLewa)>epsilon && (wartoscPrawa)>epsilon);
+     return wartoscPrawaNowa+wartoscLewaNowa;
 
-    return wartoscPrawaNowa-wartoscLewaNowa;
+}
+
+double czybyszew (int wybor,double poczatekPrzedzialu, double koniecPrzedzialu, int iloscWezlow)
+{
+    double a=poczatekPrzedzialu;
+    double b=koniecPrzedzialu;
+    double suma;
+    double wezly[4][5]={{0.577350,-0.577350,0,0,0},{0.707107,0,-0.707107,0,0},{0.794654,0.187592,-0.794654,-0.187592,0},{0.832498,0.374541,0,-0.374541,-0.832498}};
+
+    for (int i=0 ; i< iloscWezlow ; i++)
+    {
+        suma+=wartoscFunkcji(wybor,((b+a)/2)+((b-a)/2)*wezly[iloscWezlow-2][i]);
+    }
+    suma=((b-a)/iloscWezlow)*suma;
+    return suma;
 
 }
 
@@ -180,17 +171,22 @@ double simposonGranica(int wybor, double epsilon)
 
 int main()
 {
-    int wybor;
+    int wybor=0;
+    double poczatekPrzedzialu=0;
+    double koniecPrzedzialu=0;
+    int iloscPrzedzialow=0;
+    double epsilon=0;
+    int iloscWezlow=0;
+
     text("Podaj funkcje do calkowania\n");
-    text("1) x^3-x^2+7");
-    text("2) x*sinx");
+    text("1) x^2");
+    text("2) (x-1)(x^2-4)");
+    text("3) x^3 + x^2 -8x -8 ");
     cin>>wybor;
-//cout<<"Wynik calkowania \n"<<simpson(wybor);
-
-
-
-    //cout<<simposonGranica(wybor,0.001);
-    cout<<"Wynik calkowania"<<newtonCotess(wybor);
+    daneWejsciowe(poczatekPrzedzialu,koniecPrzedzialu,iloscPrzedzialow,epsilon,iloscWezlow);
+    cout<<"NEWTON-COTESS: "<<newtonCotess(wybor,poczatekPrzedzialu,koniecPrzedzialu,epsilon,iloscPrzedzialow)<<"\n";
+    cout<<"GRANICA FUNKCJI: "<<granica(wybor,epsilon)<<"\n";
+    cout<<"KWADRATURA CZYBYSZEWA: " <<czybyszew(wybor,poczatekPrzedzialu,koniecPrzedzialu,iloscWezlow)<<"\n";
 
     return 0;
 
